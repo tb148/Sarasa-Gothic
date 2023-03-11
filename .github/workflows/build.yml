@@ -32,12 +32,10 @@ jobs:
           echo "Build:    $BUILD_TYPE"
 
       - name: "Set environment variables `MY_BIN_PATH`, `PATH`"
-        shell: pwsh
+        shell: bash
         run: |
-          $myBinPath = "$env:HOME/bin"
-          New-Item -Path $myBinPath -ItemType Directory
-          Write-Output "::set-env name=MY_BIN_PATH::$myBinPath"
-          Write-Output "::add-path::$myBinPath"
+          echo "PATH=$PATH:$HOME/bin" >> $GITHUB_ENV
+          echo "MY_BIN_PATH=$HOME/bin" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
