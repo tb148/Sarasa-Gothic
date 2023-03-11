@@ -36,6 +36,7 @@ jobs:
         run: |
           echo "PATH=$PATH:$HOME/bin" >> $GITHUB_ENV
           echo "MY_BIN_PATH=$HOME/bin" >> $GITHUB_ENV
+          mkdir $MY_BIN_PATH
 
       - uses: actions/checkout@v2
 
