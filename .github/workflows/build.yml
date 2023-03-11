@@ -1,0 +1,129 @@
+name: "Build"
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Artifact name"
+        required: true
+      type:
+        description: "Build type (ttf/ttc)"
+        required: true
+        default: "ttf"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Log trigger info"
+        shell: bash
+        env:
+          ARTIFACT_NAME: ${{ github.event.inputs.name }}
+          BUILD_TYPE: ${{ github.event.inputs.type }}
+        run: |
+          echo "Actor: $GITHUB_ACTOR"
+          echo "Event: $GITHUB_EVENT_NAME"
+          echo
+          echo "Commit: $GITHUB_SHA"
+          echo "Branch: $GITHUB_REF"
+          echo
+          echo "Artifact: $ARTIFACT_NAME"
+          echo "Build:    $BUILD_TYPE"
+
+      - name: "Set environment variables `MY_BIN_PATH`, `PATH`"
+        shell: pwsh
+        run: |
+          $myBinPath = "$env:HOME/bin"
+          New-Item -Path $myBinPath -ItemType Directory
+          Write-Output "::set-env name=MY_BIN_PATH::$myBinPath"
+          Write-Output "::add-path::$myBinPath"
+
+      - uses: actions/checkout@v2
+
+      - name: "Setup Node.js environment"
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+
+      - name: "Setup Python environment"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3"
+
+      - name: "Install fonttools (latest)"
+        shell: bash
+        run: pip install fonttools
+
+      - name: "Install Premake 5 (directly)"
+        shell: bash
+        run: |
+          cd $MY_BIN_PATH
+          wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha15/premake-5.0.0-alpha15-linux.tar.gz | tar -xvz
+
+      - name: "Checkout otfcc"
+        uses: actions/checkout@v2
+        with:
+          repository: caryll/otfcc
+          path: "otfcc"
+
+      - name: "Install otfcc"
+        shell: pwsh
+        working-directory: "./otfcc"
+        run: |
+          premake5 gmake
+          cd ./build/gmake
+          make config=release_x64
+          cd ../../bin/release-x64
+          Copy-Item -Path '*' -Destination $env:MY_BIN_PATH -Recurse -PassThru
+          ls -l $env:MY_BIN_PATH
+
+      - name: "Install ttfautohint"
+        shell: bash
+        run: sudo apt --yes install ttfautohint
+
+      - name: "Install AFDKO"
+        shell: bash
+        run: pip install afdko
+
+      - name: "Install Node.js dependencies"
+        shell: bash
+        run: npm install
+
+      - name: "Build fonts"
+        shell: bash
+        env:
+          BUILD_TYPE: ${{ github.event.inputs.type }}
+        run: npm run build $BUILD_TYPE
+
+      - name: "(debug) Install tree"
+        if: ${{ always() }}
+        shell: bash
+        run: sudo apt --yes install tree
+
+      - name: "(debug) Log final workspace directory structure"
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          tree -L 3
+
+      - name: "(debug) Log environment variables"
+        if: ${{ always() }}
+        shell: pwsh
+        run: |
+          dir Env:
+          echo "`nPATH::"
+          $env:PATH -split ':'
+
+      - name: "Upload artifacts"
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.event.inputs.name }}-${{ github.event.inputs.type }}
+          path: "out/${{ github.event.inputs.type }}"
+
+      - name: "(debug) Upload npm log"
+        if: ${{ !success() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: "npm-debug-log"
+          path: "~/.npm/_logs"
