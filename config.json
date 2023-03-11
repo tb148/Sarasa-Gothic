@@ -1,13 +1,12 @@
 {
 	"buildOptions":{},
 	"familyOrder": [
-		"aile",
-		"aile-ui"
+		"aile"
 	],
 	"families": {
 		"aile": {
 			"isTNUM": true,
-			"isGothic": true,
+			"isPWID": true,
 			"latinGroup": "iosevka-aile",
 			"naming": {
 				"en_US": "Sarasa Aile",
@@ -16,19 +15,6 @@
 				"zh_HK": "Sarasa Aile",
 				"ja_JP": "Sarasa Aile",
 				"ko_KR": "Sarasa Aile"
-			}
-		},
-		"aile-ui": {
-			"isTNUM": true,
-			"isPWID": true,
-			"latinGroup": "iosevka-aile",
-			"naming": {
-				"en_US": "Sarasa Aile UI",
-				"zh_CN": "Sarasa Aile UI",
-				"zh_TW": "Sarasa Aile UI",
-				"zh_HK": "Sarasa Aile UI",
-				"ja_JP": "Sarasa Aile UI",
-				"ko_KR": "Sarasa Aile UI"
 			}
 		}
 	},
@@ -98,63 +84,20 @@
 			"uprightStyleMap": "bold"
 		}
 	},
-	"subfamilyOrder": ["cl", "sc", "tc", "hc", "j", "k"],
+	"subfamilyOrder": [
+		"sc"
+	],
 	"subfamilies": {
-		"cl": {
-			"name": "CL"
-		},
 		"sc": {
 			"name": "SC"
-		},
-		"tc": {
-			"name": "TC"
-		},
-		"hc": {
-			"name": "HC"
-		},
-		"j": {
-			"name": "J"
-		},
-		"k": {
-			"name": "K"
 		}
 	},
 	"os2encodings": {
-		"J": {
-			"gbk": false,
-			"big5": false,
-			"jis": true,
-			"korean": false
-		},
 		"SC": {
 			"gbk": true,
 			"big5": false,
 			"jis": false,
 			"korean": false
-		},
-		"TC": {
-			"gbk": false,
-			"big5": true,
-			"jis": false,
-			"korean": false
-		},
-		"HC": {
-			"gbk": false,
-			"big5": true,
-			"jis": false,
-			"korean": false
-		},
-		"CL": {
-			"gbk": false,
-			"big5": true,
-			"jis": false,
-			"korean": false
-		},
-		"K": {
-			"gbk": false,
-			"big5": false,
-			"jis": false,
-			"korean": true
 		}
 	},
 	"nameTupleSelector": {
