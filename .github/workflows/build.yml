@@ -67,15 +67,15 @@ jobs:
           path: "otfcc"
 
       - name: "Install otfcc"
-        shell: pwsh
+        shell: bash
         working-directory: "./otfcc"
         run: |
           premake5 gmake
           cd ./build/gmake
-          make config=release_x64
+          CC="clang" make config=release_x64
           cd ../../bin/release-x64
-          Copy-Item -Path '*' -Destination $env:MY_BIN_PATH -Recurse -PassThru
-          ls -l $env:MY_BIN_PATH
+          cp * $MY_BIN_PATH
+          ls -l $MY_BIN_PATH
 
       - name: "Install ttfautohint"
         shell: bash
